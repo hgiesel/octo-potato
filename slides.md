@@ -383,7 +383,8 @@ struct EnglishNounView: View {
 # Problem: Monomorphization (Wasm)
 
 
-- Typescript types sind nur eine develop-time Erscheinung {v-click}
+- Typescript types sind nur eine develop-time {v-click}
+- Under-the-hood sind alles PODs
 
 <div v-script>
 
