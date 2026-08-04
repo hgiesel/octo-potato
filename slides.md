@@ -176,7 +176,7 @@ img {
 
 <v-click>
 
-4. **Polymorphismus überlebt die Sprachbarriere**
+4. **Polymorphie überlebt die Sprachbarriere**
 
 </v-click>
 
@@ -285,7 +285,7 @@ pub struct Word<Part: PartOfSpeech> {
 
 <br>
 
-- Polymorphismus wird mit Generics sicher gestellt {v-click}
+- Polymorphie wird mit Generics sicher gestellt {v-click}
 - ...Generics sind eine Compile-time Erscheinung {v-click}
 
 <!--
@@ -326,7 +326,7 @@ pub struct Word {
 
 <v-click>
 
-- Der Polymorphismus steckt nun komplett im `PartOfSpeechRoot` Enum
+- Der Polymorphie steckt nun komplett im `PartOfSpeechRoot` Enum
 - `specification` muss beim Client erst decoded werden
 
 </v-click>
