@@ -26,10 +26,10 @@ duration: 35min
 
 # Write once, run anywhere
 
-In Rust (and Kotlin)
+In Rust (und Kotlin)
 
 <div @click="$slidev.nav.next" class="mt-12 py-1" hover:bg="white op-10">
-  Let's get rusty<carbon:arrow-right />
+  Meine Erfahrungen mit Rust + Wasm + Uniffi<carbon:arrow-right />
 </div>
 
 <div class="abs-br m-6 text-xl">
@@ -74,15 +74,13 @@ level: 2
 <br>
 <br>
     
-- Wenn, dann muss man all-in gehen! {v-click="4"}
+- Wenn, dann sollte man all-in gehen! {v-click="4"}
 
 ---
 transition: fade-out
 ---
 
 # Warum Rust?
-
-<v-click>
 
 - Hier wirds persönlich... {v-click}
 - 2019-2020: 📝 Anki Flashcard App
@@ -167,6 +165,7 @@ img {
 
 1. Webclient + Deserialization (Write endpoints once) {v-click}
 1. Data Structures + Logik wiederverwenden {v-click}
+1. Maximale Kolokation
 
 <v-click>
 
@@ -179,7 +178,6 @@ img {
 5. dadurch.. **Type-Safety**
 
 </v-click>
-
 
 ---
 transition: fade-in
@@ -213,7 +211,7 @@ pub trait Fetch {
 
 <v-click>
 
-```rust [filter-word.rs] {all}
+```rust [filter-word.rs] {all|1|6-8|9}
 impl<F: Fetch> FilterWordBy for F {
     async fn filter_words_by_language<Lang>(
         &mut self,
@@ -240,8 +238,9 @@ impl<F: Fetch> FilterWordBy for F {
 
 - Die ähnliche Struktur von Database queries und Web queries können wir uns zunutze machen {v-click}
 
-```rust [filter-word-db.rs] {all}
-#[async_trait]
+<v-click>
+
+```rust [filter-word-db.rs] {all|1|2-5|6-9}
 impl FilterWordBy for PgConnection {
     async fn filter_words_by_language<Lang>(
         &mut self,
@@ -256,7 +255,9 @@ impl FilterWordBy for PgConnection {
 }
 ```
 
-- Dadurch Kolokation von Webclient & Database fetches die dadurch wiederum ausgelöst werden {v-click}
+</v-click>
+
+- Kolokation von Webclient & Database fetches die dadurch wiederum ausgelöst werden {v-click}
 
 ---
 
@@ -275,6 +276,12 @@ pub struct Word<Part: PartOfSpeech> {
 
 - Polymorphismus wird mit Generics sicher gestellt {v-click}
 - ...Generics sind eine Compile-time Erscheinung {v-click}
+
+<!--
+- dictionary_form, könnte auch base form heißen
+- part enkodiert die Logic, die Konjugation in diesem Fall
+- specification, die Parameter welche für die Logik notwendig sind. Z.b. Irregulariät, abhängig von PartOfSpeech
+-->
 
 ---
 
