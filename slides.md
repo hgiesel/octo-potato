@@ -351,7 +351,7 @@ struct WordView: View {
   let specification: JsonValue
 
   var body: some View {
-    switch partOfSpeech {
+    switch part {
     case let .english(value):
       switch value {
       case .noun: EnglishNounView(value: specification, word: word)
