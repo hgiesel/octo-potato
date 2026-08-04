@@ -293,7 +293,7 @@ pub struct Word<Part: PartOfSpeech> {
 # Problem: Monomorphization (FFI)
 
 - Generics schaffen es nicht auf die andere Seite...  {v-click}
-- ...deswegen müssen wir Code duplizieren {v-click}
+- ...deswegen müssen wir Struct duplizieren {v-click}
 
 <v-click>
 
@@ -310,8 +310,8 @@ pub struct Word<Part: PartOfSpeech> {
 ```rust [ffi-structure.rs]
 pub struct Word {
     pub word: String,
-    pub part: PartOfSpeech,
-    pub specification: Json,
+    pub part: PartOfSpeechRoot,
+    pub specification: JsonValue,
     ...
 }
 ```
@@ -320,10 +320,14 @@ pub struct Word {
 
 <v-click>
 
-- Der Polymorphismus steckt nun komplett im `PartOfSpeech` Enum
+- Der Polymorphismus steckt nun komplett im `PartOfSpeechRoot` Enum
 - `specification` muss beim Client erst decoded werden
 
 </v-click>
+
+<!--
+Mit vorherigen client als Vorlage
+-->
 
 ---
 
@@ -380,7 +384,6 @@ struct EnglishNounView: View {
 
 
 - Typescript types sind nur eine develop-time Erscheinung {v-click}
-- Generics können herbeigezaubert werden, auch wenn der Typ monomorphisiert wurde {v-click}
 
 <div v-script>
 
@@ -407,6 +410,11 @@ export type Word<Part extends PartOfSpeechT> = {
 ````
 
 </div>
+
+<!--
+Keine Duplizierung, aber Annotierung notwendig.
+Muss selber schauen, dass meine Annotierung valide ist.
+-->
 
 ---
 
