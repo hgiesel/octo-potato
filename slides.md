@@ -425,18 +425,18 @@ Muss selber schauen, dass meine Annotierung valide ist.
 ```typescript [my-types.d.ts] {all|3,12|20|4,13|5,14|all}
 declare namespace PartOfSpeech {
   export namespace English {
-    export type Verb = {
-      Code: PartOfSpeechCode.Verb,
-      Specification: EnglishVerbSpecification,
+    export type Noun = {
+      Code: PartOfSpeechCode.Noun,
+      Specification: EnglishNounSpecification,
     };
   }
 }
 
 declare namespace PartOfSpeech {
   export namespace English {
-    export type Noun = {
-      Code: PartOfSpeechCode.Noun,
-      Specification: EnglishNounSpecification,
+    export type Verb = {
+      Code: PartOfSpeechCode.Verb,
+      Specification: EnglishVerbSpecification,
     };
   }
 }
@@ -497,6 +497,10 @@ const model = await PartOfSpeech.build(props.language, props.part)!
 - Konvertierung von PODs zu Live Objects in letzter Sekunde passieren
 
 </v-click>
+
+<!--
+Alles manuelle Generierung von Typescript definitionen via Macros (annotierung der Datentypen)
+-->
 
 ---
 
