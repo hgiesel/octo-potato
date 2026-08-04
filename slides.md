@@ -130,7 +130,7 @@ h1 {
 
 ---
 
-# Wie in Rust
+# Wie in Rust (Schlachtplan)
 
 <center v-click>
 
@@ -145,6 +145,8 @@ E -->|Android| H[Kotlin application code]
 ```
 
 </center>
+
+<br>
 
 - Language bindings gibt es auch für Python + Ruby {v-click}
 
@@ -170,7 +172,7 @@ img {
 
 1. Webclient + Deserialization (Write endpoints once) {v-click}
 1. Data Structures + Logik wiederverwenden {v-click}
-1. Maximale Kolokation
+1. Maximale Kolokation {v-click}
 
 <v-click>
 
@@ -183,6 +185,10 @@ img {
 5. dadurch.. **Type-Safety**
 
 </v-click>
+
+<!--
+Type-safety: das versprechen, dass ich nach einem Refactoring, alle Kompilierfehler fixen kann, und dann funktioniert es wieder
+-->
 
 ---
 transition: fade-in
