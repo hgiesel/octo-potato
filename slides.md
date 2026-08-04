@@ -464,6 +464,7 @@ import VerbTable from "./VerbTable.svelte";
 
 type EnglishTableInput = Part
 	? {
+     	word: string,
   		part: Part["Code"],
   		specification: Part["Specification"]
   	}
@@ -473,9 +474,9 @@ let input: EnglishTableInput = $props();
 </script>
 
 {#if input.part === PartOfSpeechCode.Noun}
-  <NounTable {...input.specification} />
+  <NounTable {...input} />
 {:else if input.part === PartOfSpeechCode.Verb}
-  <VerbTable {...input.specification} />
+  <VerbTable {...input} />
 {:else}
 	...
 {/if}
@@ -483,10 +484,10 @@ let input: EnglishTableInput = $props();
 
 ```svelte [EnglishNounView.svelte]
 <script lang="ts">
-import { type EnglishNounSpecification } from "@lib";
+import { type EnglishNounSpecification, EnglishNoun } from "@lib";
 
-const props: EnglishNounSpecification = $props();
-const model = await PartOfSpeech.build(props.language, props.part)!
+const props: { word: string, specification: EnglishNounSpecification } = $props();
+const model = await EnglishNoun.build()
 	.specify(props.specification)
 	.inflect(fetch, props.word)
 </script>
