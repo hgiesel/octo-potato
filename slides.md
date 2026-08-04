@@ -256,7 +256,7 @@ impl<F: Fetch> FilterWordBy for F {
 <v-click>
 
 ```rust [filter-word-db.rs] {all|1|2-5|6-9}
-impl FilterWordBy for PgConnection {
+impl FilterWordBy for SqliteConnection {
     async fn filter_words_by_language<Lang>(
         &mut self,
         language: &Lang,
@@ -272,7 +272,12 @@ impl FilterWordBy for PgConnection {
 
 </v-click>
 
-- Kolokation von Webclient & Database fetches die dadurch wiederum ausgelöst werden {v-click}
+- Kolokation von Webclient & Database fetches {v-click}
+- Macht "Offline-Modus" trivial zu implementieren {v-click}
+
+<!--
+Endpunkt akzeptiert entweder webclient oder sqlite database client
+-->
 
 ---
 
