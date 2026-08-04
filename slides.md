@@ -32,6 +32,10 @@ In Rust (und Kotlin)
   Meine Erfahrungen mit Rust + Wasm + Uniffi<carbon:arrow-right />
 </div>
 
+<div class="mt-12 py-1" hover:bg="white op-10">
+  von Henrik Giesel
+</div>
+
 <div class="abs-br m-6 text-xl">
   <button @click="$slidev.nav.openInEditor()" title="Open in Editor" class="slidev-icon-btn">
     <carbon:edit />
