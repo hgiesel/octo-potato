@@ -157,55 +157,201 @@ img {
 
 ---
 
-# Verwendung in Typescript
+# Erster Einblick: ein Rust Struct
 
-```ts [filename-example.ts] {all|4|6|6-7|9|all} twoslash
-// TwoSlash enables TypeScript hover information
-// and errors in markdown code blocks
-// More at https://shiki.style/packages/twoslash
-import { computed, ref } from 'vue'
-
-const count = ref(0)
-const doubled = computed(() => count.value * 2)
-
-doubled.value = 2
+```rust [data-structure.rs] {all|1|3-4|all}
+pub struct Word<Part: PartOfSpeech> {
+    pub dictionary_form: String,
+    pub part: Part,
+    pub specification: Part::Specification,
+    ...
+}
 ```
 
-<arrow v-click="[4, 5]" x1="350" y1="310" x2="195" y2="342" color="#953" width="2" arrowSize="1" />
+<br>
 
-<!-- This allow you to embed external code blocks -->
-<<< @/snippets/external.ts#snippet
-
-<!-- Footer -->
-
-[Learn more](https://sli.dev/features/line-highlighting)
-
-<!-- Inline style -->
-<style>
-.footnotes-sep {
-  @apply mt-5 opacity-10;
-}
-.footnotes {
-  @apply text-sm opacity-75;
-}
-.footnote-backref {
-  display: none;
-}
-</style>
-
-<!--
-Notes can also sync with clicks
-
-[click] This will be highlighted after the first click
-
-[click] Highlighted with `count = ref(0)`
-
-[click:3] Last click (skip two clicks)
--->
+- Polymorphismus wird mit Generics sicher gestellt {v-click}
+- ...Generics sind eine Compile-time Erscheinung {v-click}
 
 ---
-level: 2
+
+# Erstes Problem: Monomorphization (FFI)
+
+- Generics schaffen es nicht auf die andere Seite, deswegen...
+
+```rust [ffi-structure.rs]
+pub struct Word {
+    pub word: String,
+    pub part: PartOfSpeech,
+    pub specification: Json,
+    ...
+}
+```
+
+- Der Polymorphismus steckt nun komplett im `PartOfSpeech` Typ
+- `specification` muss beim Client erst decoded werden
+
 ---
+
+- Und in Swift dann...
+
+````md magic-move {lines: true}
+```swift [WordView.swift] {all|2-4|7|8|10-11|all}
+struct WordView: View {
+  let word: String
+  let part: PartOfSpeech
+  let specification: JsonValue
+
+  var body: some View {
+    switch partOfSpeech {
+    case let .english(value):
+      switch value {
+      case .noun: EnglishNounView(value: specification, word: word)
+      case .verb: EnglishVerbView(value: specification, word: word)
+      default: EmptyParadigmView()
+    }
+    ...
+  }
+  ...
+}
+```
+
+```swift [NounView.swift]
+struct EnglishNounView: View {
+  let specification: JsonValue
+  let word: String
+
+  @State private var model = EnglishNoun()
+    .specify(specification: specification)
+    .inflect(client: client, word: word)
+
+  var body: some View {
+    Grid {
+      GridRow {
+          Text("singular")
+          Text(model.singular)
+      }
+      GridRow {
+          Text("plural")
+          Text(model.plural)
+      }
+    }
+}
+```
+````
+
+---
+
+# Erstes Problem: Monomorphization (Wasm)
+
+
+- Typescript types sind nur eine develop-time Erscheinung {v-click}
+- Generics können herbeigezaubert werden, auch wenn der Typ monomorphisiert wurde {v-click}
+
+<div v-script>
+
+
+````md magic-move {lines: true}
+```rust {all|2-3,5,7,9-10|1,4,6|all}
+#[tsify(type_params = "Part extends PartOfSpeechT")]
+pub struct Word<Part: PartOfSpeech> {
+    pub word: String,
+    #[tsify(type = "Part['Code']")]
+    pub part: PartOfSpeech,
+    #[tsify(type = "Part['Specification']")]
+    pub specification: Json,
+    ...
+}
+```
+
+```rust 
+export type Word<Part extends PartOfSpeechT> = {
+    word: string;
+    part: Part['Code'];
+    specification: Part['Specification'];
+};
+```
+````
+
+</div>
+
+---
+
+- Und was ist mit Typescript...?
+
+````md magic-move {lines: true}
+```typescript [my-types.d.ts] {all|3,12|20|4,13|5,14|all}
+declare namespace PartOfSpeech {
+  export namespace English {
+    export type Verb = {
+      Code: PartOfSpeechCode.Verb,
+      Specification: EnglishVerbSpecification,
+    };
+  }
+}
+
+declare namespace PartOfSpeech {
+  export namespace English {
+    export type Noun = {
+      Code: PartOfSpeechCode.Noun,
+      Specification: EnglishNounSpecification,
+    };
+  }
+}
+
+declare namespace PartOfSpeech {
+  export type English = PartOfSpeech.English.Noun | PartOfSpeech.English.Verb | ...
+}
+```
+
+```svelte [WordView.svelte] {all|1|5|6-12|13|all}
+<script lang="ts" generics="Part extends PartOfSpeech.English">
+import { type PartOfSpeech, PartOfSpeechCode } from "@lib";
+import NounTable from "./NounTable.svelte";
+import VerbTable from "./VerbTable.svelte";
+
+type EnglishTableInput = Part
+	? {
+  		part: Part["Code"],
+  		specification: Part["Specification"]
+  	}
+	: never;
+
+let input: EnglishTableInput = $props();
+</script>
+
+{#if input.partOfSpeech === PartOfSpeechCode.Verb}
+	<VerbTable {...input.specification} />
+{:else if input.partOfSpeech === PartOfSpeechCode.Noun}
+	<NounTable {...input.specification} />
+{:else}
+	...
+{/if}
+```
+
+```svelte [EnglishNounView.svelte]
+<script lang="ts">
+import { type EnglishNounSpecification } from "@lib";
+
+const props: EnglishSpecification = $props();
+</script>
+
+<div>
+	<div>
+		Singular: {props.singular}
+	</div>
+	<div>
+		Plural: {props.plural}
+	</div>
+</div>
+```
+
+````
+
+
+---
+
+
 
 # Shiki Magic Move
 
