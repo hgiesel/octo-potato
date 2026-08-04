@@ -505,8 +505,8 @@ const model = await PartOfSpeech.build(props.language, props.part)!
 </v-click>
 
 <!--
-Alles manuelle Generierung von Typescript definitionen via Macros (annotierung der Datentypen)
-Generisches Svelte component, könnte genauso gut Vue/React sein
+- Alles manuelle Generierung von Typescript definitionen via Macros (annotierung der Datentypen), in KMP wäre es durch Gradle scripts
+- Generisches Svelte component, könnte genauso gut Vue/React sein
 -->
 
 ---
