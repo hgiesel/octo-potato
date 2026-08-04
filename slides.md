@@ -354,8 +354,8 @@ struct WordView: View {
     switch part {
     case let .english(value):
       switch value {
-      case .noun: EnglishNounView(value: specification, word: word)
-      case .verb: EnglishVerbView(value: specification, word: word)
+      case .noun: EnglishNounView(word: word, specification: specification)
+      case .verb: EnglishVerbView(word: word, specification: specification)
       default: EmptyParadigmView()
     }
     ...
@@ -366,8 +366,8 @@ struct WordView: View {
 
 ```swift [NounView.swift]
 struct EnglishNounView: View {
-  let specification: JsonValue
   let word: String
+  let specification: JsonValue
 
   @State private var model = EnglishNoun()
     .specify(specification: specification)
