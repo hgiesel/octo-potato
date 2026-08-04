@@ -462,9 +462,9 @@ type EnglishTableInput = Part
 let input: EnglishTableInput = $props();
 </script>
 
-{#if input.partOfSpeech === PartOfSpeechCode.Verb}
+{#if input.part === PartOfSpeechCode.Verb}
 	<VerbTable {...input.specification} />
-{:else if input.partOfSpeech === PartOfSpeechCode.Noun}
+{:else if input.part === PartOfSpeechCode.Noun}
 	<NounTable {...input.specification} />
 {:else}
 	...
