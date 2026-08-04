@@ -393,9 +393,9 @@ struct EnglishNounView: View {
 pub struct Word<Part: PartOfSpeech> {
     pub word: String,
     #[tsify(type = "Part['Code']")]
-    pub part: PartOfSpeech,
+    pub part: Part,
     #[tsify(type = "Part['Specification']")]
-    pub specification: Json,
+    pub specification: Part::Specification,
     ...
 }
 ```
