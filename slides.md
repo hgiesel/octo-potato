@@ -513,10 +513,9 @@ Generisches Svelte component, könnte genauso gut Vue/React sein
 
 </v-click>
 
-- Erfordert Duplizierung von Models {v-click}
-
+- Erfordert Duplizierung von Models (FFI) {v-click}
 - Garantieren von Type-safety durch FFI ist simpel {v-click}
-- Generieren und korrekte Verwendung von Typescript Bindings erfordert viel Disziplin {v-click}
+- Generieren und korrekte Verwendung von Typescript Bindings erfordert Disziplin {v-click}
 
 # Rust vs KMP
 
