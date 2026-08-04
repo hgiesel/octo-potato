@@ -519,5 +519,5 @@ Generisches Svelte component, könnte genauso gut Vue/React sein
 
 # Rust vs KMP
 
+- Letztendlich erfordert beides ähnlich viel Einarbeitung {v-click}
 - Rust Macros > Gradle {v-click}
-- Aber letztendlich erfordert beides ähnlich viel Einarbeitung {v-click}
