@@ -42,6 +42,41 @@ In Rust (and Kotlin)
 </div>
 
 ---
+transition: slide-up
+level: 2
+---
+
+# Warum Write Once, Run Everywhere?
+
+- Erfahrungen mit Kotlin Multiplatform (KMP)
+
+<v-click>
+
+## Probleme
+
+<table>
+    <tr v-click="2">
+      <th></th>
+      <th>Gründe</th>
+    </tr>
+    <tr v-click="2">
+      <td>Große Binaries (500MB)</td>
+      <td>Miskonfiguration</td>
+    </tr>
+    <tr v-click="3">
+      <td>Wird nicht optimal ausgeschöpft</td>
+      <td>Miskommunikation im Team / Frontend & Backend</td>
+    </tr>
+</table>
+
+</v-click>
+
+<br>
+<br>
+    
+- Wenn, dann muss man all-in gehen! {v-click="4"}
+
+---
 transition: fade-out
 ---
 
@@ -49,6 +84,7 @@ transition: fade-out
 
 <v-click>
 
+- Hier wirds persönlich... {v-click}
 - 2019-2020: 📝 Anki Flashcard App
 
 <div class="right">
@@ -90,34 +126,24 @@ h1 {
 </style>
 
 ---
-transition: slide-up
-level: 2
----
 
-# Warum Write Once, Run Everywhere
+# Wie in Rust
 
-- Erfahrungen mit Kotlin Multiplatform (KMP)
+<center v-click>
 
-<v-click>
+```mermaid {theme: 'neutral', scale: 0.8}
+graph TD
+B[Rust code] --> C{ }
+C -->|server| F[Webserver]
+C -->|uniffi by Mozilla| E[C FFI + Language bindings]
+C -->|wasm-bindgen| D[WASM + .d.ts files]
+E -->|iOS| G[Swift application code]
+E -->|Android| H[Kotlin application code]
+```
 
-## Probleme
+</center>
 
-<table>
-    <tr>
-      <th></th>
-      <th>Gründe</th>
-    </tr>
-    <tr v-click="2">
-      <td>Große Binaries (500MB)</td>
-      <td>Misconfiguration</td>
-    </tr>
-    <tr v-click="3">
-      <td>Wird nicht optimal ausgeschöpft</td>
-      <td>Miskommunikation im Team / Frontend & Backend</td>
-    </tr>
-</table>
-
-</v-click>
+- Language bindings gibt es auch für Python + Ruby {v-click}
 
 ---
 
@@ -125,7 +151,7 @@ level: 2
 
 - Flashcard App mit Unterstützung für mehrere Sprachen
 - Wörter nachschlagen und lokal speichern {v-click}
-- Wörter konjugieren und als "gelernt" markieren {v-click}
+- Wörter korrekt konjugieren und als "gelernt" markieren {v-click}
 
 ![image](https://linguadex.app/favicon.ico)
 
@@ -137,27 +163,104 @@ img {
 </style>
 
 <br>
-<h1 v-click>Erwartungen an Implementation</h1>
+<h1 v-click>Ideale Implementation...</h1>
 
-- Webclient + Deserialization (Write endpoints once) {v-click}
-- Konjugationslogik wiederverwenden {v-click}
-- Data Structures wiederverwenden {v-click}
+1. Webclient + Deserialization (Write endpoints once) {v-click}
+1. Data Structures + Logik wiederverwenden {v-click}
 
 <v-click>
 
-- **Polymorphismus überlebt die Sprachbarriere**
+4. **Polymorphismus überlebt die Sprachbarriere**
 
 </v-click>
 
 <v-click>
 
-- **Komplette Type-Safety**
+5. dadurch.. **Type-Safety**
+
+</v-click>
+
+
+---
+transition: fade-in
+---
+
+# Webclient implementation (1)
+
+- Zunächst ein generisches "Fetch" interface, welches von der Hostsprache implementiert wird {v-click}
+
+<v-click>
+
+```rust [fetch.rs] {all|1|2|4|5-8|all}
+pub trait Fetch {
+    type Response;
+    
+    async fn fetch(&self, url: String) -> Result<Self::Response, FetchError>;
+    async fn deserialize_json(
+        &self,
+        response: Self::Response,
+    ) -> Result<Json, SerializeError>;
+}
+```
 
 </v-click>
 
 ---
 
-# Erster Einblick: ein Rust Struct
+# Webclient implementation (2)
+
+- Dann implementieren wir für dieses Interface alle Endpunkte {v-click}
+
+<v-click>
+
+```rust [filter-word.rs] {all}
+impl<F: Fetch> FilterWordBy for F {
+    async fn filter_words_by_language<Lang>(
+        &mut self,
+        language: &Lang,
+    ) -> Result<Vec<Word<Lang::PartOfSpeech>>> {
+        let response = self
+            .fetch(format!("/words/language/{}", language.code()))
+            .await?;
+        Ok(self.deserialize_json(response).await?)
+    }
+    
+    ...
+}
+```
+
+</v-click>
+
+- Dadurch kann Server und Client Code nebeneinander leben {v-click}
+- Validierung ist inklusive {v-click}
+
+---
+
+# Database client implementation
+
+- Die ähnliche Struktur von Database queries und Web queries können wir uns zunutze machen {v-click}
+
+```rust [filter-word-db.rs] {all}
+#[async_trait]
+impl FilterWordBy for PgConnection {
+    async fn filter_words_by_language<Lang>(
+        &mut self,
+        language: &Lang,
+    ) -> Result<Vec<Word<Lang::PartOfSpeech>>> {
+        let result = sqlx::query_as("SELECT ... FROM words WHERE ...")
+            .fetch_all(self)
+            .await?;
+        Ok(result)
+    }
+    ...
+}
+```
+
+- Dadurch Kolokation von Webclient & Database fetches die dadurch wiederum ausgelöst werden {v-click}
+
+---
+
+# Ein Rust Struct
 
 ```rust [data-structure.rs] {all|1|3-4|all}
 pub struct Word<Part: PartOfSpeech> {
@@ -175,9 +278,12 @@ pub struct Word<Part: PartOfSpeech> {
 
 ---
 
-# Erstes Problem: Monomorphization (FFI)
+# Monomorphization (FFI)
 
-- Generics schaffen es nicht auf die andere Seite, deswegen...
+- Generics schaffen es nicht auf die andere Seite...  {v-click}
+- ...deswegen müssen wir Code duplizieren {v-click}
+
+<v-click>
 
 ```rust [ffi-structure.rs]
 pub struct Word {
@@ -188,8 +294,14 @@ pub struct Word {
 }
 ```
 
-- Der Polymorphismus steckt nun komplett im `PartOfSpeech` Typ
+</v-click>
+
+<v-click>
+
+- Der Polymorphismus steckt nun komplett im `PartOfSpeech` Enum
 - `specification` muss beim Client erst decoded werden
+
+</v-click>
 
 ---
 
@@ -242,14 +354,13 @@ struct EnglishNounView: View {
 
 ---
 
-# Erstes Problem: Monomorphization (Wasm)
+# Monomorphization (Wasm)
 
 
 - Typescript types sind nur eine develop-time Erscheinung {v-click}
 - Generics können herbeigezaubert werden, auch wenn der Typ monomorphisiert wurde {v-click}
 
 <div v-script>
-
 
 ````md magic-move {lines: true}
 ```rust {all|2-3,5,7,9-10|1,4,6|all}
@@ -334,493 +445,39 @@ let input: EnglishTableInput = $props();
 import { type EnglishNounSpecification } from "@lib";
 
 const props: EnglishSpecification = $props();
+const model = await PartOfSpeech.build(props.language, props.part)!
+	.specify(props.specification)
+	.inflect(fetch, props.word)
 </script>
 
 <div>
 	<div>
-		Singular: {props.singular}
+		Singular: {model.singular}
 	</div>
 	<div>
-		Plural: {props.plural}
+		Plural: {model.plural}
 	</div>
 </div>
 ```
-
 ````
-
-
----
-
-
-
-# Shiki Magic Move
-
-Powered by [shiki-magic-move](https://shiki-magic-move.netlify.app/), Slidev supports animations across multiple code snippets.
-
-Add multiple code blocks and wrap them with <code>````md magic-move</code> (four backticks) to enable the magic move. For example:
-
-````md magic-move {lines: true}
-```ts {*|2|*}
-// step 1
-const author = reactive({
-  name: 'John Doe',
-  books: [
-    'Vue 2 - Advanced Guide',
-    'Vue 3 - Basic Guide',
-    'Vue 4 - The Mystery'
-  ]
-})
-```
-
-```ts {*|1-2|3-4|3-4,8}
-// step 2
-export default {
-  data() {
-    return {
-      author: {
-        name: 'John Doe',
-        books: [
-          'Vue 2 - Advanced Guide',
-          'Vue 3 - Basic Guide',
-          'Vue 4 - The Mystery'
-        ]
-      }
-    }
-  }
-}
-```
-
-```ts
-// step 3
-export default {
-  data: () => ({
-    author: {
-      name: 'John Doe',
-      books: [
-        'Vue 2 - Advanced Guide',
-        'Vue 3 - Basic Guide',
-        'Vue 4 - The Mystery'
-      ]
-    }
-  })
-}
-```
-
-Non-code blocks are ignored.
-
-```vue
-<!-- step 4 -->
-<script setup>
-const author = {
-  name: 'John Doe',
-  books: [
-    'Vue 2 - Advanced Guide',
-    'Vue 3 - Basic Guide',
-    'Vue 4 - The Mystery'
-  ]
-}
-</script>
-```
-````
-
----
-
-# Components
-
-<div grid="~ cols-2 gap-4">
-<div>
-
-You can use Vue components directly inside your slides.
-
-We have provided a few built-in components like `<Tweet/>`, `<BlueSky/>`, and `<Youtube/>` that you can use directly. And adding your custom components is also super easy.
-
-```html
-<Counter :count="10" />
-```
-
-<!-- ./components/Counter.vue -->
-<Counter :count="10" m="t-4" />
-
-Check out [the guides](https://sli.dev/builtin/components.html) for more.
-
-</div>
-<div>
-
-```html
-<Tweet id="1390115482657726468" />
-```
-
-<Tweet id="1390115482657726468" scale="0.65" />
-
-</div>
-</div>
-
-<!--
-Presenter note with **bold**, *italic*, and ~~striked~~ text.
-
-Also, HTML elements are valid:
-<div class="flex w-full">
-  <span style="flex-grow: 1;">Left content</span>
-  <span>Right content</span>
-</div>
--->
-
----
-class: px-20
----
-
-# Themes
-
-Slidev comes with powerful theming support. Themes can provide styles, layouts, components, or even configurations for tools. Switching between themes by just **one edit** in your frontmatter:
-
-<div grid="~ cols-2 gap-2" m="t-2">
-
-```yaml
----
-theme: default
----
-```
-
-```yaml
----
-theme: seriph
----
-```
-
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-default/01.png?raw=true" alt="">
-
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-seriph/01.png?raw=true" alt="">
-
-</div>
-
-Read more about [How to use a theme](https://sli.dev/guide/theme-addon#use-theme) and
-check out the [Awesome Themes Gallery](https://sli.dev/resources/theme-gallery).
-
----
-
-# Clicks Animations
-
-You can add `v-click` to elements to add a click animation.
-
-<div v-click>
-
-This shows up when you press <kbd>space</kbd> or <kbd>right</kbd>, or click outside the slide on the right.
-
-```html
-<div v-click>This shows up when you trigger a click animation.</div>
-```
-
-</div>
-
-<p v-click>
-You can also add modifiers to change the animation:
-</p>
-
-<div class="grid gap-3 mt-4 text-sm" style="grid-template-columns: repeat(3, 1fr) 1.5fr 1fr">
-  <div v-after.up class="p-3 rounded border border-primary/20 bg-primary/10">
-    <div class="font-mono text-xs opacity-60 mb-1">v-click.up</div>
-    <div>Slide from bottom</div>
-  </div>
-  <div v-click.fade-in class="p-3 rounded border border-primary/30 bg-primary/15">
-    <div class="font-mono text-xs opacity-60 mb-1">v-click.fade-in</div>
-    <div>Fade in</div>
-  </div>
-  <div v-click.fade class="p-3 rounded border border-primary/40 bg-primary/20">
-    <div class="font-mono text-xs opacity-60 mb-1">v-click.fade</div>
-    <div>Dim (0.5 opacity)</div>
-  </div>
-  <div v-click.fade.right.scale class="p-3 rounded border border-primary/50 bg-primary/25">
-    <div class="font-mono text-xs opacity-60 mb-1">v-click.fade.right.scale</div>
-    <div>Composed</div>
-  </div>
-  <div v-click.none class="p-3 rounded border border-primary/60 bg-primary/30">
-    <div class="font-mono text-xs opacity-60 mb-1">v-click.none</div>
-    <div>No transition</div>
-  </div>
-</div>
 
 <v-click>
 
-The <span v-mark.red="7"><code>v-mark</code> directive</span>
-also allows you to add
-<span v-mark.circle.orange="8">inline marks</span>
-, powered by [Rough Notation](https://roughnotation.com/):
-
-```html
-<span v-mark.underline.orange>inline markers</span>
-```
+- Konvertierung von PODs zu Live Objects in letzter Sekunde passieren
 
 </v-click>
 
-<div v-click mt-12>
-
-[Learn more](https://sli.dev/guide/animations#click-animation)
-
-</div>
-
 ---
 
-# Motions
+# Fazit
 
-Motion animations are powered by [@vueuse/motion](https://motion.vueuse.org/), triggered by `v-motion` directive.
+- Kolokation von Server + Client Code ist *sehr praktisch* {v-click}
+- Erfordert Duplizierung von Models {v-click}
 
-```html
-<div
-  v-motion
-  :initial="{ x: -80 }"
-  :enter="{ x: 0 }"
-  :click-3="{ x: 80 }"
-  :leave="{ x: 1000 }"
->
-  Slidev
-</div>
-```
+- Garantieren von Type-safety durch FFI ist simpel {v-click}
+- Generieren und korrekte Verwendung von Typescript Bindings erfordert viel Disziplin {v-click}
 
-<div class="w-60 relative">
-  <div class="relative w-40 h-40">
-    <img
-      v-motion
-      :initial="{ x: 800, y: -100, scale: 1.5, rotate: -50 }"
-      :enter="final"
-      class="absolute inset-0"
-      src="https://sli.dev/logo-square.png"
-      alt=""
-    />
-    <img
-      v-motion
-      :initial="{ y: 500, x: -100, scale: 2 }"
-      :enter="final"
-      class="absolute inset-0"
-      src="https://sli.dev/logo-circle.png"
-      alt=""
-    />
-    <img
-      v-motion
-      :initial="{ x: 600, y: 400, scale: 2, rotate: 100 }"
-      :enter="final"
-      class="absolute inset-0"
-      src="https://sli.dev/logo-triangle.png"
-      alt=""
-    />
-  </div>
+# Rust vs KMP
 
-  <div
-    class="text-5xl absolute top-14 left-40 text-[#2B90B6] -z-1"
-    v-motion
-    :initial="{ x: -80, opacity: 0}"
-    :enter="{ x: 0, opacity: 1, transition: { delay: 2000, duration: 1000 } }">
-    Slidev
-  </div>
-</div>
-
-<!-- vue script setup scripts can be directly used in markdown, and will only affects current page -->
-<script setup lang="ts">
-const final = {
-  x: 0,
-  y: 0,
-  rotate: 0,
-  scale: 1,
-  transition: {
-    type: 'spring',
-    damping: 10,
-    stiffness: 20,
-    mass: 2
-  }
-}
-</script>
-
-<div
-  v-motion
-  :initial="{ x:35, y: 30, opacity: 0}"
-  :enter="{ y: 0, opacity: 1, transition: { delay: 3500 } }">
-
-[Learn more](https://sli.dev/guide/animations.html#motion)
-
-</div>
-
----
-
-# $\LaTeX$
-
-$\LaTeX$ is supported out-of-box. Powered by [$\KaTeX$](https://katex.org/).
-
-<div h-3 />
-
-Inline $\sqrt{3x-1}+(1+x)^2$
-
-Block
-$$ {1|3|all}
-\begin{aligned}
-\nabla \cdot \vec{E} &= \frac{\rho}{\varepsilon_0} \\
-\nabla \cdot \vec{B} &= 0 \\
-\nabla \times \vec{E} &= -\frac{\partial\vec{B}}{\partial t} \\
-\nabla \times \vec{B} &= \mu_0\vec{J} + \mu_0\varepsilon_0\frac{\partial\vec{E}}{\partial t}
-\end{aligned}
-$$
-
-[Learn more](https://sli.dev/features/latex)
-
----
-
-# Diagrams
-
-You can create diagrams / graphs from textual descriptions, directly in your Markdown.
-
-<div class="grid grid-cols-4 gap-5 pt-4 -mb-6">
-
-```mermaid {scale: 0.5, alt: 'A simple sequence diagram'}
-sequenceDiagram
-    Alice->John: Hello John, how are you?
-    Note over Alice,John: A typical interaction
-```
-
-```mermaid {theme: 'neutral', scale: 0.8}
-graph TD
-B[Text] --> C{Decision}
-C -->|One| D[Result 1]
-C -->|Two| E[Result 2]
-```
-
-```mermaid
-mindmap
-  root((mindmap))
-    Origins
-      Long history
-      ::icon(fa fa-book)
-      Popularisation
-        British popular psychology author Tony Buzan
-    Research
-      On effectiveness<br/>and features
-      On Automatic creation
-        Uses
-            Creative techniques
-            Strategic planning
-            Argument mapping
-    Tools
-      Pen and paper
-      Mermaid
-```
-
-```plantuml {scale: 0.7}
-@startuml
-
-package "Some Group" {
-  HTTP - [First Component]
-  [Another Component]
-}
-
-node "Other Groups" {
-  FTP - [Second Component]
-  [First Component] --> FTP
-}
-
-cloud {
-  [Example 1]
-}
-
-database "MySql" {
-  folder "This is my folder" {
-    [Folder 3]
-  }
-  frame "Foo" {
-    [Frame 4]
-  }
-}
-
-[Another Component] --> [Example 1]
-[Example 1] --> [Folder 3]
-[Folder 3] --> [Frame 4]
-
-@enduml
-```
-
-</div>
-
-Learn more: [Mermaid Diagrams](https://sli.dev/features/mermaid) and [PlantUML Diagrams](https://sli.dev/features/plantuml)
-
----
-foo: bar
-dragPos:
-  square: 691,32,167,_,-16
----
-
-# Draggable Elements
-
-Double-click on the draggable elements to edit their positions.
-
-<br>
-
-###### Directive Usage
-
-```md
-<img v-drag="'square'" src="https://sli.dev/logo.png">
-```
-
-<br>
-
-###### Component Usage
-
-```md
-<v-drag text-3xl>
-  <div class="i-carbon:arrow-up" />
-  Use the `v-drag` component to have a draggable container!
-</v-drag>
-```
-
-<v-drag pos="663,206,261,_,-15">
-  <div text-center text-3xl border border-main rounded>
-    Double-click me!
-  </div>
-</v-drag>
-
-<img v-drag="'square'" src="https://sli.dev/logo.png">
-
-###### Draggable Arrow
-
-```md
-<v-drag-arrow two-way />
-```
-
-<v-drag-arrow pos="67,452,253,46" two-way op70 />
-
----
-src: ./pages/imported-slides.md
-hide: false
----
-
----
-
-# Monaco Editor
-
-Slidev provides built-in Monaco Editor support.
-
-Add `{monaco}` to the code block to turn it into an editor:
-
-```ts {monaco}
-import { ref } from 'vue'
-import { emptyArray } from './external'
-
-const arr = ref(emptyArray(10))
-```
-
-Use `{monaco-run}` to create an editor that can execute the code directly in the slide:
-
-```ts {monaco-run}
-import { version } from 'vue'
-import { emptyArray, sayHello } from './external'
-
-sayHello()
-console.log(`vue ${version}`)
-console.log(emptyArray<number>(10).reduce(fib => [...fib, fib.at(-1)! + fib.at(-2)!], [1, 1]))
-```
-
----
-layout: center
-class: text-center
----
-
-# Learn More
-
-[Documentation](https://sli.dev) · [GitHub](https://github.com/slidevjs/slidev) · [Showcases](https://sli.dev/resources/showcases)
-
-<PoweredBySlidev mt-10 />
+- Rust Macros > Gradle {v-click}
+- Aber letztendlich erfordert beides ähnlich viel Einarbeitung {v-click}
