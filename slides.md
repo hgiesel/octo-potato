@@ -310,7 +310,7 @@ pub struct Word<Part: PartOfSpeech> {
 ````md magic-move {lines: true}
 ```rust
 pub struct Word<Part: PartOfSpeech> {
-    pub dictionary_form: String,
+    pub word: String,
     pub part: Part,
     pub specification: Part::Specification,
     ...
