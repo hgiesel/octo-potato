@@ -55,6 +55,7 @@ level: 2
 ## Probleme
 
 <table>
+    <tbody>
     <tr v-click="2">
       <th></th>
       <th>Gründe</th>
@@ -67,6 +68,7 @@ level: 2
       <td>Wird nicht optimal ausgeschöpft</td>
       <td>Miskommunikation im Team / Frontend & Backend</td>
     </tr>
+    </tbody>
 </table>
 
 </v-click>
@@ -82,7 +84,10 @@ transition: fade-out
 
 # Warum Rust?
 
-- Hier wirds persönlich... {v-click}
+- Hier wirds persönlich... 
+
+<v-click>
+
 - 2019-2020: 📝 Anki Flashcard App
 
 <div class="right">
