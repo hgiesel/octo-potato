@@ -24,12 +24,12 @@ comark: true
 duration: 35min
 ---
 
-# Welcome to Slidev
+# Write once, run anywhere
 
-Presentation slides for developers
+In Rust (and Kotlin)
 
 <div @click="$slidev.nav.next" class="mt-12 py-1" hover:bg="white op-10">
-  Press Space for next page <carbon:arrow-right />
+  Let's get rusty<carbon:arrow-right />
 </div>
 
 <div class="abs-br m-6 text-xl">
@@ -41,36 +41,43 @@ Presentation slides for developers
   </a>
 </div>
 
-<!--
-The last comment block of each slide will be treated as slide notes. It will be visible and editable in Presenter Mode along with the slide. [Read more in the docs](https://sli.dev/guide/syntax.html#notes)
--->
-
 ---
 transition: fade-out
 ---
 
-# What is Slidev?
+# Warum Rust?
 
-Slidev is a slides maker and presenter designed for developers, consist of the following features
+<v-click>
 
-- 📝 **Text-based** - focus on the content with Markdown, and then style them later
-- 🎨 **Themable** - themes can be shared and re-used as npm packages
-- 🧑‍💻 **Developer Friendly** - code highlighting, live coding with autocompletion
-- 🤹 **Interactive** - embed Vue components to enhance your expressions
-- 🎥 **Recording** - built-in recording and camera view
-- 📤 **Portable** - export to PDF, PPTX, PNGs, or even a hostable SPA
-- 🛠 **Hackable** - virtually anything that's possible on a webpage is possible in Slidev
-<br>
-<br>
+- 2019-2020: 📝 Anki Flashcard App
 
-Read more about [Why Slidev?](https://sli.dev/guide/why)
+<div class="right">
 
-<!--
-You can have `style` tag in markdown to override the style for the current page.
-Learn more: https://sli.dev/features/slide-scope-style
+![Anki icon](/images/anki.png)
+
+Mehr über [Anki](https://apps.ankiweb.net/)
+
+</div>
+
+</v-click>
+
+<!-- 
+- Übersetzung von Python logik code nach Rust, damit ios und python app dieselbe logik verwenden kann.
+- Flashcard Scheduler / Synchronization
+- Meine Rolle war aber Frontend Svelte
 -->
 
 <style>
+.right {
+    max-width: 250px;
+    float: right;
+    text-align: center;
+}
+
+.spacer {
+    height: 180px;
+}
+
 h1 {
   background-color: #2B90B6;
   background-image: linear-gradient(45deg, #4EC5D4 10%, #146b8c 20%);
@@ -82,64 +89,75 @@ h1 {
 }
 </style>
 
-<!--
-Here is another comment.
--->
-
 ---
 transition: slide-up
 level: 2
 ---
 
-# Navigation
+# Warum Write Once, Run Everywhere
 
-Hover on the bottom-left corner to see the navigation's controls panel, [learn more](https://sli.dev/guide/ui#navigation-bar)
+- Erfahrungen mit Kotlin Multiplatform (KMP)
 
-## Keyboard Shortcuts
+<v-click>
 
-|                                                     |                             |
-| --------------------------------------------------- | --------------------------- |
-| <kbd>right</kbd> / <kbd>space</kbd>                 | next animation or slide     |
-| <kbd>left</kbd>  / <kbd>shift</kbd><kbd>space</kbd> | previous animation or slide |
-| <kbd>up</kbd>                                       | previous slide              |
-| <kbd>down</kbd>                                     | next slide                  |
+## Probleme
 
-<!-- https://sli.dev/guide/animations.html#click-animation -->
-<img
-  v-click
-  class="absolute -bottom-9 -left-7 w-80 opacity-50"
-  src="https://sli.dev/assets/arrow-bottom-left.svg"
-  alt=""
-/>
-<p v-after class="absolute bottom-23 left-45 opacity-30 transform -rotate-10">Here!</p>
+<table>
+    <tr>
+      <th></th>
+      <th>Gründe</th>
+    </tr>
+    <tr v-click="2">
+      <td>Große Binaries (500MB)</td>
+      <td>Misconfiguration</td>
+    </tr>
+    <tr v-click="3">
+      <td>Wird nicht optimal ausgeschöpft</td>
+      <td>Miskommunikation im Team / Frontend & Backend</td>
+    </tr>
+</table>
 
----
-layout: two-cols
-layoutClass: gap-16
----
-
-# Table of contents
-
-You can use the `Toc` component to generate a table of contents for your slides:
-
-```html
-<Toc minDepth="1" maxDepth="1" />
-```
-
-The title will be inferred from your slide content, or you can override it with `title` and `level` in your frontmatter.
-
-::right::
-
-<Toc text-sm minDepth="1" maxDepth="2" />
+</v-click>
 
 ---
-layout: image-right
-image: https://cover.sli.dev
+
+# Sample app 
+
+- Flashcard App mit Unterstützung für mehrere Sprachen
+- Wörter nachschlagen und lokal speichern {v-click}
+- Wörter konjugieren und als "gelernt" markieren {v-click}
+
+![image](https://linguadex.app/favicon.ico)
+
+<style>
+img {
+    min-width: 150px;
+    float: right;
+}
+</style>
+
+<br>
+<h1 v-click>Erwartungen an Implementation</h1>
+
+- Webclient + Deserialization (Write endpoints once) {v-click}
+- Konjugationslogik wiederverwenden {v-click}
+- Data Structures wiederverwenden {v-click}
+
+<v-click>
+
+- **Polymorphismus überlebt die Sprachbarriere**
+
+</v-click>
+
+<v-click>
+
+- **Komplette Type-Safety**
+
+</v-click>
+
 ---
 
-# Code
-
-Use code snippets and get the highlighting directly, and even types hover!
+# Verwendung in Typescript
 
 ```ts [filename-example.ts] {all|4|6|6-7|9|all} twoslash
 // TwoSlash enables TypeScript hover information
