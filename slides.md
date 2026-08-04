@@ -541,4 +541,12 @@ Sobald FFI kompiliert, ist es korrekt, während WASM,
 
 ---
 
+<br>
+<br>
+<br>
+    
+<center>
+
 # Vielen Dank!
+
+</center>
