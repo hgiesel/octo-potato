@@ -446,7 +446,7 @@ declare namespace PartOfSpeech {
 }
 ```
 
-```svelte [WordView.svelte] {all|1|5|6-12|13|all}
+```svelte [WordView.svelte] {all|1|5|6-12|13|16-20|all}
 <script lang="ts" generics="Part extends PartOfSpeech.English">
 import { type PartOfSpeech, PartOfSpeechCode } from "@lib";
 import NounTable from "./NounTable.svelte";
