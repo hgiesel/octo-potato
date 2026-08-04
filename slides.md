@@ -500,6 +500,7 @@ const model = await PartOfSpeech.build(props.language, props.part)!
 
 <!--
 Alles manuelle Generierung von Typescript definitionen via Macros (annotierung der Datentypen)
+Generisches Svelte component, könnte genauso gut Vue/React sein
 -->
 
 ---
