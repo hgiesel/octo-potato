@@ -475,7 +475,7 @@ let input: EnglishTableInput = $props();
 <script lang="ts">
 import { type EnglishNounSpecification } from "@lib";
 
-const props: EnglishSpecification = $props();
+const props: EnglishNounSpecification = $props();
 const model = await PartOfSpeech.build(props.language, props.part)!
 	.specify(props.specification)
 	.inflect(fetch, props.word)
