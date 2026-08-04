@@ -285,12 +285,22 @@ pub struct Word<Part: PartOfSpeech> {
 
 ---
 
-# Monomorphization (FFI)
+# Problem: Monomorphization (FFI)
 
 - Generics schaffen es nicht auf die andere Seite...  {v-click}
 - ...deswegen müssen wir Code duplizieren {v-click}
 
 <v-click>
+
+````md magic-move {lines: true}
+```rust
+pub struct Word<Part: PartOfSpeech> {
+    pub dictionary_form: String,
+    pub part: Part,
+    pub specification: Part::Specification,
+    ...
+}
+```
 
 ```rust [ffi-structure.rs]
 pub struct Word {
@@ -300,7 +310,7 @@ pub struct Word {
     ...
 }
 ```
-
+````
 </v-click>
 
 <v-click>
@@ -361,7 +371,7 @@ struct EnglishNounView: View {
 
 ---
 
-# Monomorphization (Wasm)
+# Problem: Monomorphization (Wasm)
 
 
 - Typescript types sind nur eine develop-time Erscheinung {v-click}
