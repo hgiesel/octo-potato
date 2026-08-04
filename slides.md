@@ -78,6 +78,10 @@ level: 2
     
 - Wenn, dann sollte man all-in gehen! {v-click="4"}
 
+<!--
+In einer vorherigen Stelle,
+-->
+
 ---
 transition: fade-out
 ---
@@ -299,7 +303,7 @@ pub struct Word<Part: PartOfSpeech> {
 # Problem: Monomorphization (FFI)
 
 - Generics schaffen es nicht auf die andere Seite...  {v-click}
-- ...deswegen müssen wir Struct duplizieren {v-click}
+- ...deswegen müssen wir das Struct duplizieren {v-click}
 
 <v-click>
 
