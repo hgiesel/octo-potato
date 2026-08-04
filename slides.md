@@ -303,7 +303,7 @@ pub struct Word<Part: PartOfSpeech> {
 # Problem: Monomorphization (FFI)
 
 - Generics schaffen es nicht auf die andere Seite...  {v-click}
-- ...deswegen müssen wir das Struct duplizieren {v-click}
+- ...deswegen müssen wir das Struct duplizieren mit "POD"s {v-click}
 
 <v-click>
 
@@ -336,7 +336,7 @@ pub struct Word {
 </v-click>
 
 <!--
-Mit vorherigen client als Vorlage
+PODs plain/passive old data, im Kontrast zu Objects
 -->
 
 ---
@@ -505,7 +505,7 @@ const model = await EnglishNoun.build()
 
 <v-click>
 
-- Konvertierung von PODs zu Live Objects in letzter Sekunde passieren
+- Konvertierung von PODs zu Objects in letzter Sekunde passieren
 
 </v-click>
 
