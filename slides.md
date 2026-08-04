@@ -509,15 +509,18 @@ Generisches Svelte component, könnte genauso gut Vue/React sein
 
 <v-click>
 
-- Kolokation und Type-Safety von Server + Client Code ist sehr möglich
+- Kolokation und Type-Safety von Server + Client Code ist sehr möglich und hilfreich für Menschen und AI
 
 </v-click>
 
-- Erfordert Duplizierung von Models (FFI) {v-click}
-- Garantieren von Type-safety durch FFI ist simpel {v-click}
+- Garantieren von Type-safety durch FFI erfordert Duplizierung, ist aber simpel {v-click}
 - Generieren und korrekte Verwendung von Typescript Bindings erfordert Disziplin {v-click}
 
 # Rust vs KMP
 
 - Letztendlich erfordert beides ähnlich viel Einarbeitung {v-click}
 - Rust Macros > Gradle {v-click}
+
+<!--
+Sobald FFI kompiliert, ist es korrekt, während WASM, 
+-->
