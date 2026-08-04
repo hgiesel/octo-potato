@@ -538,3 +538,7 @@ const model = await EnglishNoun.build()
 <!--
 Sobald FFI kompiliert, ist es korrekt, während WASM, 
 -->
+
+---
+
+# Vielen Dank!
