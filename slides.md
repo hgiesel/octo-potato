@@ -507,7 +507,12 @@ Generisches Svelte component, könnte genauso gut Vue/React sein
 
 # Fazit
 
-- Kolokation von Server + Client Code ist *sehr praktisch* {v-click}
+<v-click>
+
+- Kolokation von Server + Client Code ist *sehr praktisch*
+
+</v-click>
+
 - Erfordert Duplizierung von Models {v-click}
 
 - Garantieren von Type-safety durch FFI ist simpel {v-click}
