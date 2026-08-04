@@ -527,6 +527,9 @@ const model = await EnglishNoun.build()
 - Garantieren von Type-safety durch FFI erfordert Duplizierung, ist aber simpel {v-click}
 - Generieren und korrekte Verwendung von Typescript Bindings erfordert Disziplin {v-click}
 
+<br>
+<br>
+
 # Rust vs KMP
 
 - Letztendlich erfordert beides ähnlich viel Einarbeitung {v-click}
