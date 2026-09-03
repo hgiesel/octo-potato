@@ -69,11 +69,13 @@ transition: fade-out
 ## Optimierungsansätze
 
 - clientseitig:
-  - `FlatList` + `keyExtractor` 
-  - `onEndReached` + `onEndReachedThreshold`
-  - `React.memo`, insbesondere das zwei Argumente
+  - `FlatList` für virtualisierte Listen
+  - `onEndReached` + `onEndReachedThreshold` für Infinite Scroll
+  - `React.memo` für unnötige Item-Re-Renders vermeiden
 - API-seitig: 
-  - paging + appending (im Falle eines Infinite Scroll)
+  - Pagination
+  - Nur benötigte Daten laden
+  - Ergebnisse beim Scrollen anhängen
   
 ---
 transition: fade-out
@@ -90,6 +92,22 @@ transition: fade-out
 ---
 
 # Speech actions 
+
+```mermaid
+flowchart TD
+    A["I want to learn Haus"]
+    B["Speech Recognition"]
+    C["I want to learn Haus"]
+    D["Kimi K3"]
+    E["{ type: 'learn', word: 'Haus' }"]
+    F["learn('Haus')"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+```
 
 - Wir schicken NL zu Server
 
