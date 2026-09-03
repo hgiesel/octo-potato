@@ -135,7 +135,7 @@ const handleSpeech = async () => {
 </div>
 
 ---
-transition: fade-out
+transition: fade-up
 ---
 
 - Wir schicken NL zu Server
@@ -167,40 +167,36 @@ transition: fade-out
 - Zurück in der App
 
 ```tsx
-const [prompt, setPrompt] = useState(null)
-const [promptLoading, setPromptLoading] = useState(false)
+setPrompt(transcript);
 
-const onSpeech = async (transcript: string, isFinal: boolean) => {
-  setPrompt(transcript);
+if (isFinal) {
+  setPromptLoading(true);
+  
+  let value: z.infer<typeof ExpressionSchema> | undefined;
 
-  if (isFinal) {
-    setPromptLoading(true);
-    
-    let value: z.infer<typeof ExpressionSchema> | undefined;
-
-    try {
-      value = await chat(transcript);
-    } catch (error) {
-      console.error('Error', `Something went wrong: ${error}`);
-      return;
-    }
-
-    if (typeof value.type === 'string') {
-      if (value.type === 'search') {
-        setFilter(value.query);
-      } else if (value.type === 'add') {
-        add(value.word);
-      } else if (value.type === 'review') {
-        review(value.word);
-      } else if (value.type === 'learn') {
-        learn(value.word);
-      }
-    }
-
-    setPromptLoading(false);
-    setPrompt(null);
+  try {
+    value = await chat(transcript);
+  } catch (error) {
+    console.error('Error', `Something went wrong: ${error}`);
+    return;
   }
-};
+  
+  setPromptLoading(false);
+
+  if (typeof value.type === 'string') {
+    if (value.type === 'search') {
+      setFilter(value.query);
+    } else if (value.type === 'add') {
+      add(value.word);
+    } else if (value.type === 'review') {
+      review(value.word);
+    } else if (value.type === 'learn') {
+      learn(value.word);
+    }
+  }
+}
+
+setPrompt('');
 ```
 
 ---
