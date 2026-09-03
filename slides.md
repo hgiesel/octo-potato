@@ -104,8 +104,35 @@ transition: slide-up
 
 # Speech Recognition API
 
+<div v-click-hide>
 - `@react-native-voice/voice` ist deprecated
 - Glücklicherweiße können wir auch Expo packages verwenden
+</div>
+
+<div-vclick>
+
+```tsx
+const handleSpeech = async () => {
+  let permission = await ExpoSpeechRecognitionModule.getPermissionsAsync();
+
+  if (!permission.granted) {
+    permission = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+  }
+
+  if (!permission.granted) {
+    console.warn('Speech recognition permission not granted');
+    return;
+  }
+
+  ExpoSpeechRecognitionModule.start({
+    lang: 'en-US',
+    interimResults: true,
+    maxAlternatives: 1,
+  });
+};
+```
+
+</div>
 
 ---
 transition: fade-out
