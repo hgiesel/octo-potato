@@ -56,8 +56,6 @@ level: 2
 - Speech Recognition API
 - Anbindungen an LLMs für NLP
 
-<v-click>
-
 ---
 transition: fade-out
 ---
@@ -86,12 +84,13 @@ transition: fade-out
 - `@react-native-voice/voice` ist deprecated
 - Glücklicherweiße können wir auch Expo packages verwenden
 
-
 ---
 transition: fade-out
 ---
 
 # Speech actions 
+
+- Als alternative zu Menüs und klassischen Forms
 
 ```mermaid
 flowchart TD
@@ -109,12 +108,14 @@ flowchart TD
     E --> F
 ```
 
+---
+transition: fade-out
+---
+
 - Wir schicken NL zu Server
 
 ```tsx
 app.post('/chat', async (c) => {
-	const { messages } = await c.req.json();
-
 	while (true) {
 		const response = await fetch('https://api.moonshot.ai/v1/chat/completions', {
 			method: 'POST',
@@ -136,18 +137,20 @@ app.post('/chat', async (c) => {
 
 		const data = await response.json();
 		
-		const assistantMessage = data.choices[0].message;
-		
 		if (assistenMessage.tool_call) {
   		...
   		messages.push(assistantMessage);
       continue
 		}
 
-		return c.json(data);
+		return json(data)
 	}
 });
 ```
+
+---
+transition: fade-out
+---
 
 - LLM ist konfiguriert JSON Actions auszugeben (Tools zu verwenden)
 - Wir können Actions parsen und anwenden
@@ -196,6 +199,14 @@ const onSpeech = async (transcript: string, isFinal: boolean) => {
 <br>
     
 <center>
+
+# Ergebnis
+
+- Große Wortlisten performant dargestellt
+- Firestore-Daten paginiert
+- Spracheingabe integriert
+- Natürliche Sprache als App-Steuerung
+- LLM liefert typsichere Actions
 
 # Vielen Dank!
 
