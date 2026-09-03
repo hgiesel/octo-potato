@@ -113,36 +113,22 @@ transition: fade-out
 - Wir schicken NL zu Server
 
 ```tsx
-app.post('/chat', async (c) => {
-	while (true) {
-		const response = await fetch('https://api.moonshot.ai/v1/chat/completions', {
-			method: 'POST',
-			headers: { ... }
-			body: JSON.stringify({
-				messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...messages],
-				tools: [...],
-				reasoning_effort: 'low',
-				response_format: {
-					type: 'json_schema',
-					json_schema: {
-						name: 'Expression',
-						strict: true,
-						schema: actionSchema,
-					},
-				},
-			}),
-		});
-
-		const data = await response.json();
-		
-		if (assistenMessage.tool_call) {
-  		...
-  		messages.push(assistantMessage);
-      continue
-		}
-
-		return json(data)
-	}
+const response = await fetch('https://api.moonshot.ai/v1/chat/completions', {
+	method: 'POST',
+	headers: { ... }
+	body: JSON.stringify({
+		messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...messages],
+		tools: [...],
+		reasoning_effort: 'low',
+		response_format: {
+			type: 'json_schema',
+			json_schema: {
+				name: 'Expression',
+				strict: true,
+				schema: actionSchema,
+			},
+		},
+	}),
 });
 ```
 
@@ -150,8 +136,7 @@ app.post('/chat', async (c) => {
 transition: fade-out
 ---
 
-- LLM ist konfiguriert JSON Actions auszugeben (Tools zu verwenden)
-- Wir können Actions parsen und anwenden
+- Zurück in der App
 
 ```tsx
 const [prompt, setPrompt] = useState(null)
@@ -200,8 +185,7 @@ const onSpeech = async (transcript: string, isFinal: boolean) => {
 
 # Ergebnis
 
-- Große Wortlisten performant dargestellt
-- Firestore-Daten paginiert
+- Firestore-Daten performant dargestellt
 - Spracheingabe integriert
 - Natürliche Sprache als App-Steuerung
 - LLM liefert typsichere Actions
