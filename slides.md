@@ -53,39 +53,12 @@ level: 2
 # Requirements
 
 - Lange Liste mit Wörtern (Daten)
+- Suchfeld
 - Speech Recognition API
 - Anbindungen an LLMs für NLP
 
 ---
-transition: fade-out
----
-
-# Probleme bei langen Listen
-
-- Angebungen an Firestore API mit 1000+ Einträgen
-
-## Optimierungsansätze
-
-- clientseitig:
-  - `FlatList` für virtualisierte Listen
-  - `onEndReached` + `onEndReachedThreshold` für Infinite Scroll
-  - `React.memo` für unnötige Item-Re-Renders vermeiden
-- API-seitig: 
-  - Pagination
-  - Nur benötigte Daten laden
-  - Ergebnisse beim Scrollen anhängen
-  
----
-transition: fade-out
----
-
-# Speech Recognition API
-
-- `@react-native-voice/voice` ist deprecated
-- Glücklicherweiße können wir auch Expo packages verwenden
-
----
-transition: fade-out
+transition: slide-left
 ---
 
 # Speech actions 
@@ -105,6 +78,34 @@ flowchart TD
 ```
 
 </center>
+
+---
+transition: slide-up
+---
+
+# Probleme bei langen Listen
+
+- Anbindung an Firestore API mit 1000+ Einträgen
+
+## Optimierungsansätze
+
+- clientseitig:
+  - `FlatList` für virtualisierte Listen
+  - `onEndReached` + `onEndReachedThreshold` für Infinite Scroll
+  - `React.memo` für unnötige Item-Re-Renders vermeiden
+- API-seitig: 
+  - Pagination
+  - Nur benötigte Daten laden
+  - Ergebnisse beim Scrollen anhängen
+  
+---
+transition: slide-up
+---
+
+# Speech Recognition API
+
+- `@react-native-voice/voice` ist deprecated
+- Glücklicherweiße können wir auch Expo packages verwenden
 
 ---
 transition: fade-out
