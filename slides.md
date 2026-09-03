@@ -96,18 +96,12 @@ transition: fade-out
 
 ```mermaid
 flowchart TD
-    A["I want to learn Haus"]
-    B["Speech Recognition"]
-    C["I want to learn Haus"]
-    D["Kimi K3"]
-    E["{ type: 'learn', word: 'Haus' }"]
-    F["learn('Haus')"]
+    A["Speech Recognition: I want to learn {word}"]
+    B["Kimi K3: { type: 'learn', word: '{word}' }"]
+    C["Zod: learn('Haus')"]
 
     A --> B
     B --> C
-    C --> D
-    D --> E
-    E --> F
 ```
 
 </center>
