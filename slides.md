@@ -135,7 +135,7 @@ const handleSpeech = async () => {
 </div>
 
 ---
-transition: fade-up
+transition: slide-up
 ---
 
 - Wir schicken NL zu Server
@@ -161,7 +161,7 @@ const response = await fetch('https://api.moonshot.ai/v1/chat/completions', {
 ```
 
 ---
-transition: fade-out
+transition: slide-left
 ---
 
 - Zurück in der App
@@ -200,6 +200,8 @@ setPrompt('');
 ```
 
 ---
+transition: slide-up
+---
 
 <br>
 <br>
@@ -207,12 +209,15 @@ setPrompt('');
     
 <center>
 
-# Ergebnis
+# Ergebnisse
 
 - Firestore-Daten performant dargestellt
 - Spracheingabe integriert
+  - ... `SFSpeechRecognizer` ist fehleranfällig
 - Natürliche Sprache als App-Steuerung
+  - ... Suche nach ähnlich-klingenden Worten ist unmöglich
 - LLM liefert typsichere Actions
+  - ... Misverständisse
 
 # Vielen Dank!
 
