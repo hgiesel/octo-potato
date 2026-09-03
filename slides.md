@@ -84,7 +84,60 @@ transition: fade-out
 - `@react-native-voice/voice` ist deprecated
 - Glücklicherweiße können wir auch Expo packages verwenden
 
+
+---
+transition: fade-out
+---
+
+# Speech actions 
+
+- Wir schicken NL zu Server
+
+```tsx
+app.post('/chat', async (c) => {
+	const { messages } = await c.req.json();
+
+	while (true) {
+		const response = await fetch('https://api.moonshot.ai/v1/chat/completions', {
+			method: 'POST',
+			headers: { ... }
+			body: JSON.stringify({
+				messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...messages],
+				tools: [...],
+				reasoning_effort: 'low',
+				response_format: {
+					type: 'json_schema',
+					json_schema: {
+						name: 'Expression',
+						strict: true,
+						schema: actionSchema,
+					},
+				},
+			}),
+		});
+
+		const data = await response.json();
+		
+		const assistantMessage = data.choices[0].message;
+		
+		if (assistenMessage.tool_call) {
+  		...
+  		messages.push(assistantMessage);
+      continue
+		}
+
+		return c.json(data);
+	}
+});
 ```
+
+- LLM ist konfiguriert JSON Actions auszugeben (Tools zu verwenden)
+- Wir können Actions parsen und anwenden
+
+```tsx
+const [prompt, setPrompt] = useState(null)
+const [promptLoading, setPromptLoading] = useState(false)
+
 const onSpeech = async (transcript: string, isFinal: boolean) => {
   setPrompt(transcript);
 
@@ -117,56 +170,6 @@ const onSpeech = async (transcript: string, isFinal: boolean) => {
   }
 };
 ```
-
----
-transition: fade-out
----
-
-# Speech actions 
-
-- Wir schicken NL zu Server
-
-```
-app.post('/chat', async (c) => {
-	const { messages } = await c.req.json();
-
-	while (true) {
-		const response = await fetch('https://api.moonshot.ai/v1/chat/completions', {
-			method: 'POST',
-			headers: { ... }
-			body: JSON.stringify({
-				messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...messages],
-				tools: [...],
-				reasoning_effort: 'low',
-				response_format: {
-					type: 'json_schema',
-					json_schema: {
-						name: 'Expression',
-						strict: true,
-						schema: schema5LevelsDeep,
-					},
-				},
-			}),
-		});
-
-		const data = await response.json();
-		
-		const assistantMessage = data.choices[0].message;
-		
-		if (assistenMessage.tool_call) {
-  		...
-  		messages.push(assistantMessage);
-      continue
-		}
-
-
-		return c.json(data);
-	}
-});
-```
-
-- LLM ist konfiguriert JSON Actions auszugeben (Tools zu verwenden)
-- Wir können Actions parsen und anwenden
 
 ---
 
