@@ -92,6 +92,8 @@ transition: fade-out
 
 - Als alternative zu Menüs und klassischen Forms
 
+<center>
+
 ```mermaid
 flowchart TD
     A["I want to learn Haus"]
@@ -107,6 +109,8 @@ flowchart TD
     D --> E
     E --> F
 ```
+
+</center>
 
 ---
 transition: fade-out
