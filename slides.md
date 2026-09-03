@@ -68,30 +68,105 @@ transition: fade-out
 
 ## Optimierungsansätze
 
-
 - clientseitig:
   - `FlatList` + `keyExtractor` 
   - `onEndReached` + `onEndReachedThreshold`
   - `React.memo`, insbesondere das zwei Argumente
 - API-seitig: 
   - paging + appending (im Falle eines Infinite Scroll)
+  
+---
+transition: fade-out
+---
 
-```rust [filter-word.rs] {all|1|6-8|9}
-impl<F: Fetch> FilterWordBy for F {
-    async fn filter_words_by_language<Lang>(
-        &mut self,
-        language: &Lang,
-    ) -> Result<Vec<Word<Lang::PartOfSpeech>>> {
-        let response = self
-            .fetch(format!("/words/language/{}", language.code()))
-            .await?;
-        Ok(self.deserialize_json(response).await?)
-    }
+# Speech Recognition API
+
+- `@react-native-voice/voice` ist deprecated
+- Glücklicherweiße können wir auch Expo packages verwenden
+
+```
+const onSpeech = async (transcript: string, isFinal: boolean) => {
+  setPrompt(transcript);
+
+  if (isFinal) {
+    setPromptLoading(true);
     
-    ...
-}
+    let value: z.infer<typeof ExpressionSchema> | undefined;
+
+    try {
+      value = await chat(transcript);
+    } catch (error) {
+      console.error('Error', `Something went wrong: ${error}`);
+      return;
+    }
+
+    if (typeof value.type === 'string') {
+      if (value.type === 'search') {
+        setFilter(value.query);
+      } else if (value.type === 'add') {
+        add(value.word);
+      } else if (value.type === 'review') {
+        review(value.word);
+      } else if (value.type === 'learn') {
+        learn(value.word);
+      }
+    }
+
+    setPromptLoading(false);
+    setPrompt(null);
+  }
+};
 ```
 
+---
+transition: fade-out
+---
+
+# Speech actions 
+
+- Wir schicken NL zu Server
+
+```
+app.post('/chat', async (c) => {
+	const { messages } = await c.req.json();
+
+	while (true) {
+		const response = await fetch('https://api.moonshot.ai/v1/chat/completions', {
+			method: 'POST',
+			headers: { ... }
+			body: JSON.stringify({
+				messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...messages],
+				tools: [...],
+				reasoning_effort: 'low',
+				response_format: {
+					type: 'json_schema',
+					json_schema: {
+						name: 'Expression',
+						strict: true,
+						schema: schema5LevelsDeep,
+					},
+				},
+			}),
+		});
+
+		const data = await response.json();
+		
+		const assistantMessage = data.choices[0].message;
+		
+		if (assistenMessage.tool_call) {
+  		...
+  		messages.push(assistantMessage);
+      continue
+		}
+
+
+		return c.json(data);
+	}
+});
+```
+
+- LLM ist konfiguriert JSON Actions auszugeben (Tools zu verwenden)
+- Wir können Actions parsen und anwenden
 
 ---
 
